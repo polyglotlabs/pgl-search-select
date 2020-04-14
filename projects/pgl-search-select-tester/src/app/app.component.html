@@ -22,7 +22,7 @@
     <pgl-search-select placeholder="search" [formControl]="searchSelect3" [options]="optionList3$ | async"
         [displayWith]="displayWith2" pglEmptyOptionFirst="true">
 
-        <ng-container *pglEmptyOptionDef> Clear </ng-container>
+        <ng-container *pglEmptyOptionDef> <mat-option>Clear</mat-option></ng-container>
     </pgl-search-select>
 </mat-form-field>
 

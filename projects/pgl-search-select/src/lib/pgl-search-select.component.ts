@@ -121,11 +121,12 @@ export function optionalStartWith<T, D>(str: D): OperatorFunction<T, T | D> {
 
             <ng-template #list>
                 <ng-container *ngIf="options$ | async as ops">
-                    <mat-option *ngIf="emptyOptionDef">
+                    <ng-container *ngTemplateOutlet="emptyOptionDef && isEmptyOptionFirst ? emptyOptionDef : false"></ng-container>
+                    <!-- <mat-option>
                         <ng-container
                             *ngTemplateOutlet="emptyOptionDef"
                         ></ng-container>
-                    </mat-option>
+                    </mat-option> -->
                     <mat-option *ngFor="let option of ops" [value]="option">
                         <ng-container
                             *ngTemplateOutlet="
@@ -134,11 +135,13 @@ export function optionalStartWith<T, D>(str: D): OperatorFunction<T, T | D> {
                             "
                         ></ng-container>
                     </mat-option>
-                    <mat-option *ngIf="emptyOptionDef">
+
+                    <ng-container *ngTemplateOutlet="emptyOptionDef && !isEmptyOptionFirst ? emptyOptionDef : false"></ng-container>
+                    <!-- <mat-option *ngIf="emptyOptionDef">
                         <ng-container
                             *ngTemplateOutlet="emptyOptionDef"
                         ></ng-container>
-                    </mat-option>
+                    </mat-option> -->
                 </ng-container>
             </ng-template>
 
@@ -409,7 +412,7 @@ export class PGLSearchSelectComponent<T>
     // CONTENT CHILD
     @ContentChild(PGLOptionDef, { read: TemplateRef })
     optionDef: PGLOptionDef;
-    @ContentChild(PGLEmptyOptionDef, {static: true, read: TemplateRef })
+    @ContentChild(PGLEmptyOptionDef, {read: TemplateRef })
     emptyOptionDef: PGLEmptyOptionDef;
     @ContentChild(PGLOptionDef, { read: TemplateRef })
     loadingOptionDef: PGLLoadingOptionDef;
