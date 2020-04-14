@@ -1,0 +1,30 @@
+{
+  "name": "pgl-search-select",
+  "version": "9.0.1",
+  "peerDependencies": {
+    "@angular/common": "^9.1.0",
+    "@angular/core": "^9.1.0",
+    "@angular/animations": "^9.0.7",
+    "@angular/forms": "^9.1.0",
+    "@angular/cdk": "^9.2.0",
+    "@angular/material": "^9.2.0"
+  },
+  "author": "Polyglot Labs",
+  "license": "MIT",
+  "description": "Searchable select",
+  "main": "index.js",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/polyglotlabs/pgl-search-select"
+  },
+  "keywords": [
+      "Angular",
+      "Angular 9",
+      "search",
+      "select"
+  ],
+  "bugs": {
+      "url": "https://github.com/polyglotlabs/pgl-search-select/issues"
+  },
+  "homepage": "https://github.com/polyglotlabs/pgl-search-select#readme"
+}

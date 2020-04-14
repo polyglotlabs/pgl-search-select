@@ -1,0 +1,43 @@
+<mat-form-field>
+    <mat-label>String List</mat-label>
+    <pgl-search-select placeholder="search" [formControl]="searchSelect1" [options]="optionList1$ | async">
+    </pgl-search-select>
+    <mat-error>Error</mat-error>
+    <mat-hint>Hint</mat-hint>
+</mat-form-field>
+<div>
+    <pre>
+        {{ log.jsonSafeObj(searchSelect1, 1) | json}}
+    </pre>
+</div>
+<br>
+<mat-form-field>
+    <mat-label>String List 2</mat-label>
+    <pgl-search-select placeholder="search" [formControl]="searchSelect2" [filterWith]="filterWith2"
+        [displayWith]="displayWith2" displayLoading="true"></pgl-search-select>
+</mat-form-field>
+<br>
+<mat-form-field>
+    <mat-label>String List 3</mat-label>
+    <pgl-search-select placeholder="search" [formControl]="searchSelect3" [options]="optionList3$ | async"
+        [displayWith]="displayWith2" pglEmptyOptionFirst="true">
+
+        <ng-container *pglEmptyOptionDef> Clear </ng-container>
+    </pgl-search-select>
+</mat-form-field>
+
+<div matAutocompleteOrigin #origin='matAutocompleteOrigin'>
+    <mat-form-field>
+        <mat-label>Native Autocomplete</mat-label>
+        <input matInput placeholder="search" [formControl]="testInput" [matAutocomplete]="auto"
+            [matAutocompleteConnectedTo]="origin">
+        <button matSuffix mat-icon-button>
+            <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+    </mat-form-field>
+    <mat-autocomplete #auto="matAutocomplete">
+        <mat-option value="one">One</mat-option>
+        <mat-option value="two">Two</mat-option>
+    </mat-autocomplete>
+
+</div>

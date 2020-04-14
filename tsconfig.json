@@ -17,9 +17,18 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "pgl-search-select": [
+        "dist/pgl-search-select"
+      ],
+      "pgl-search-select/*": [
+        "dist/pgl-search-select/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
+    "enableIvy": false,
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true
   }

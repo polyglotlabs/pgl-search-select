@@ -2,5 +2,162 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
-  "projects": {}
+  "projects": {
+    "pgl-search-select": {
+      "projectType": "library",
+      "root": "projects/pgl-search-select",
+      "sourceRoot": "projects/pgl-search-select/src",
+      "prefix": "pgl",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/pgl-search-select/tsconfig.lib.json",
+            "project": "projects/pgl-search-select/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/pgl-search-select/src/test.ts",
+            "tsConfig": "projects/pgl-search-select/tsconfig.spec.json",
+            "karmaConfig": "projects/pgl-search-select/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/pgl-search-select/tsconfig.lib.json",
+              "projects/pgl-search-select/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "pgl-search-select-tester": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/pgl-search-select-tester",
+      "sourceRoot": "projects/pgl-search-select-tester/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/pgl-search-select-tester",
+            "index": "projects/pgl-search-select-tester/src/index.html",
+            "main": "projects/pgl-search-select-tester/src/main.ts",
+            "polyfills": "projects/pgl-search-select-tester/src/polyfills.ts",
+            "tsConfig": "projects/pgl-search-select-tester/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "projects/pgl-search-select-tester/src/favicon.ico",
+              "projects/pgl-search-select-tester/src/assets"
+            ],
+            "styles": [
+              "projects/pgl-search-select-tester/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/pgl-search-select-tester/src/environments/environment.ts",
+                  "with": "projects/pgl-search-select-tester/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "pgl-search-select-tester:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "pgl-search-select-tester:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "pgl-search-select-tester:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/pgl-search-select-tester/src/test.ts",
+            "polyfills": "projects/pgl-search-select-tester/src/polyfills.ts",
+            "tsConfig": "projects/pgl-search-select-tester/tsconfig.spec.json",
+            "karmaConfig": "projects/pgl-search-select-tester/karma.conf.js",
+            "assets": [
+              "projects/pgl-search-select-tester/src/favicon.ico",
+              "projects/pgl-search-select-tester/src/assets"
+            ],
+            "styles": [
+              "projects/pgl-search-select-tester/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/pgl-search-select-tester/tsconfig.app.json",
+              "projects/pgl-search-select-tester/tsconfig.spec.json",
+              "projects/pgl-search-select-tester/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/pgl-search-select-tester/e2e/protractor.conf.js",
+            "devServerTarget": "pgl-search-select-tester:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "pgl-search-select-tester:serve:production"
+            }
+          }
+        }
+      }
+    }},
+  "defaultProject": "pgl-search-select"
 }
