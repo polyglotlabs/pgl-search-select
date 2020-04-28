@@ -44,9 +44,7 @@ app.component.html
         [displayWith]="displayWith2"
         pglEmptyOptionFirst="true"
     >
-        <ng-container *pglEmptyOptionDef>
-            <mat-option>Clear</mat-option>
-        </ng-container>
+        <ng-container *pglEmptyOptionDef>Clear</ng-container>
     </pgl-search-select>
 </mat-form-field>
 ```
@@ -131,6 +129,52 @@ export class AppComponent implements OnInit, Observer<any> {
 }
 ```
 
+app.service.ts
+
+```ts
+import { Injectable } from "@angular/core";
+import { Observable, of } from "rxjs";
+import { delay } from "rxjs/operators";
+
+export interface KeyValue {
+    key: string;
+    value: string;
+}
+
+@Injectable({
+    providedIn: "root",
+})
+export class AppService {
+    getList(): Observable<string[]> {
+        return of(["name", "smith", "dave", "file"]).pipe(
+            this.randomDelay(3000)
+        ) as Observable<string[]>;
+    }
+
+    getObjList(): Observable<KeyValue[]> {
+        return of([
+            {
+                key: "name",
+                value: "dave",
+            },
+            {
+                key: "family",
+                value: "indeed",
+            },
+            {
+                key: "valve",
+                value: "elbow",
+            },
+        ]).pipe(this.randomDelay(3000)) as Observable<KeyValue[]>;
+    }
+
+    randomDelay(c: number) {
+        return delay(Math.random() * c);
+    }
+}
+
+```
+
 app.module.ts
 
 ```ts
@@ -171,16 +215,18 @@ export class AppModule {}
 ## Property list
 
 ```ts
-@Input() placeholder: string
-@Input() required: boolean
-@Input() disabled: boolean
-@Input() value: T
+@Input() placeholder: string;
+@Input() required: boolean;
+@Input() disabled: boolean;
+@Input() value: T;
 @Input() displayFn: (_: string | T)=> string;
-@Input() valueFn: (item: T) => T | T[K];
-@Input() filterWith: (val: string)=> T[]
+@Input() filterWith: (val: string)=> Observable<T[]>;
 @Input() options: T[];
 @Input() startWith: string; // defautl ''. If null or undefined will bypass the initial filtering.
 @Input() searchWait: number;
+@Input() autoActiveFirstOption: boolean; // default: false;
+@Input() displayLoading: boolean; // default: true;
+@Input("pglEmptyOptionFirst") isEmptyOptionFirst: boolean; // default: false
 @Output() onSelect: any;
-@Output() onFilter: string
+@Output() onFilter: string;
 ```
