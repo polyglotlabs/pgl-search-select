@@ -40,9 +40,9 @@ export class log {
     static GroupEnd = log.show ? console.groupEnd : EmptyFunction;
     static Tap(message: string, thisArg?) {
         return tap({
-            next: (val) => log.Debug(`NEXT: ${message}`, val, thisArg),
-            error: (err) => log.Error(`ERROR: `, message, err, thisArg),
-            complete: () => log.Debug(`COMPLETE: ${message}`, thisArg),
+            next: (val) => log.Debug(`NEXT: ${message}`, val, thisArg ? thisArg : ''),
+            error: (err) => log.Error(`ERROR: ${message}`, err, thisArg ? thisArg : ''),
+            complete: () => log.Debug(`COMPLETE: ${message}`, thisArg ? thisArg : ''),
         });
     }
 

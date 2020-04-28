@@ -1,5 +1,13 @@
+<!-- <div [linkWatcher]="callBack">
+    <div>
+        <a href="www.google.com">link 1</a>
+    </div>
+
+    <a href>link 2</a>
+</div> -->
+
 <mat-form-field>
-    <mat-label>String List</mat-label>
+    <!-- <mat-label></mat-label> -->
     <pgl-search-select placeholder="search" [formControl]="searchSelect1" [options]="optionList1$ | async">
     </pgl-search-select>
     <mat-error>Error</mat-error>
@@ -14,7 +22,12 @@
 <mat-form-field>
     <mat-label>String List 2</mat-label>
     <pgl-search-select placeholder="search" [formControl]="searchSelect2" [filterWith]="filterWith2"
-        [displayWith]="displayWith2" displayLoading="true"></pgl-search-select>
+        [displayWith]="displayWith2">
+        <div *pglOptionDef="let option" class="mat-2-line">
+            <p class="mat-line">{{displayWith2(option)}} random stuff</p>
+            <p class="mat-line">{{ option | json }} sub line info</p>
+        </div>
+    </pgl-search-select>
 </mat-form-field>
 <br>
 <mat-form-field>
@@ -22,7 +35,7 @@
     <pgl-search-select placeholder="search" [formControl]="searchSelect3" [options]="optionList3$ | async"
         [displayWith]="displayWith2" pglEmptyOptionFirst="true">
 
-        <ng-container *pglEmptyOptionDef> <mat-option>Clear</mat-option></ng-container>
+        <ng-container *pglEmptyOptionDef> Clear </ng-container>
     </pgl-search-select>
 </mat-form-field>
 

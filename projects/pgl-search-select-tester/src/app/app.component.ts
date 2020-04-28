@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormControl, Validators } from "@angular/forms";
 import { AppService, KeyValue } from "./app.service";
 import { Observable, Observer } from "rxjs";
-import { map, shareReplay } from "rxjs/operators";
+import { map, shareReplay, tap } from "rxjs/operators";
 import { Autobind } from "./common/autobind";
 import { Logger } from "./common/log/log.class";
 
@@ -58,13 +58,16 @@ export class AppComponent implements OnInit, Observer<any> {
         return this._as
             .getObjList()
             .pipe(
-                this.log.Tap(`filter value ${val}`),
                 map((list: any[]) =>
                     !val ? list : list.filter((item) => item.key.includes(val))
-                )
+                ),
+               tap(list => this.log.Debug(`filter value ${val}`, list))
             );
     }
-    
+    @Autobind
+    callBack(e){
+        console.log(e);
+    }
 
     valueWith2(o: KeyValue): string {
         return o ? o.value : null;

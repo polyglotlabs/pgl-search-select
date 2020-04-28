@@ -6,77 +6,127 @@ app.component.html
 
 ```html
 <mat-form-field>
-    <mat-label>Label</mat-label>
-    <eye-simple-search-select
-        [label]="'Key Field'"
-        [placeholder]="'Search'"
-        [options]="options"
-        (onFilter)="onFilter($event)"
-        (onSelect)="onSelect($event)"
+    <mat-label>String List</mat-label>
+    <pgl-search-select
+        placeholder="search"
+        [formControl]="searchSelect1"
+        [options]="optionList1$ | async"
+    >
+    </pgl-search-select>
+    <mat-error>Error</mat-error>
+    <mat-hint>Hint</mat-hint>
+</mat-form-field>
+<br />
+<mat-form-field>
+    <mat-label>String List 2</mat-label>
+    <pgl-search-select
+        placeholder="search"
+        [formControl]="searchSelect2"
+        [filterWith]="filterWith2"
+        [displayWith]="displayWith2"
+        displayLoading="true"
     >
         <!-- the styling has be update by the user -->
         <!-- default `mat-option` does not support multi-line option -->
         <div *eyeOptionDef="let option" class="mat-list-option mat-2-line">
-            <p class="mat-line">{{option}} randome stuff</p>
+            <p class="mat-line">{{option}} random stuff</p>
             <p class="mat-line">sub line info</p>
         </div>
-    </eye-simple-search-select>
-    <mat-error> error </mat-error>
-    <mat-hint> hint </mat-hint>
+    </pgl-search-select>
+</mat-form-field>
+<br />
+<mat-form-field>
+    <mat-label>String List 3</mat-label>
+    <pgl-search-select
+        placeholder="search"
+        [formControl]="searchSelect3"
+        [options]="optionList3$ | async"
+        [displayWith]="displayWith2"
+        pglEmptyOptionFirst="true"
+    >
+        <ng-container *pglEmptyOptionDef>
+            <mat-option>Clear</mat-option>
+        </ng-container>
+    </pgl-search-select>
 </mat-form-field>
 ```
 
 app.component.ts
 
 ```ts
-import { Component } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Component, OnInit } from "@angular/core";
+import { FormControl, Validators } from "@angular/forms";
+import { AppService, KeyValue } from "./app.service";
+import { Observable, Observer } from "rxjs";
+import { map, shareReplay } from "rxjs/operators";
+import { Autobind } from "./common/autobind";
+import { Logger } from "./common/log/log.class";
+
+interface GenericObj<T = any> {
+    [key: string]: T;
+}
 
 @Component({
     selector: "app-root",
     templateUrl: "./app.component.html",
-    styleUrls: ["./app.component.css"],
+    styleUrls: ["./app.component.scss"],
 })
-export class AppComponent {
-    title = "Search Select examples";
-
-    optionsObservable: Observable<any[]>;
-    simpleSelectValue: any = null;
-
-    select = ["item 1", "item 2", "item 3"];
-
-    simpleSelect = this.select;
-
-    selectObj = of([
+export class AppComponent implements OnInit, Observer<any> {
+    title = "pgl-search-select-tester";
+    log = Logger;
+    testInput = new FormControl();
+    searchSelect1 = new FormControl(null, Validators.required);
+    optionList1$: Observable<string[]>;
+    optionList3$: Observable<GenericObj[]>;
+    searchSelect2 = new FormControl(
         {
-            name: "Item 1",
-            value: 1,
+            key: "family",
+            value: "indeed",
         },
-        {
-            name: "Item 2",
-            value: 2,
-        },
-        {
-            name: "Item 3",
-            value: 3,
-        },
-    ]);
+        Validators.required
+    );
+    searchSelect3 = new FormControl();
+    constructor(private _as: AppService) {}
 
-    simpleSearchObj = this.selectObj;
+    ngOnInit(): void {
+        this.searchSelect1.valueChanges.pipe(this.withIndex(1)).subscribe(this);
+        this.searchSelect2.valueChanges.pipe(this.withIndex(2)).subscribe(this);
+        this.searchSelect3.valueChanges.pipe(this.withIndex(3)).subscribe(this);
+        this.optionList1$ = this._as.getList().pipe(shareReplay(1));
+        this.optionList3$ = this._as.getObjList().pipe(shareReplay(1));
+    }
+    @Autobind
+    next([val, i]): void {
+        this.log.Debug(`select ${i}: ${val}`);
+    }
+    @Autobind
+    error([val, i]): void {
+        this.log.Error(`select ${i}`, val);
+    }
+    @Autobind
+    complete(): void {
+        this.log.Warn(`select completed...`);
+    }
 
-    displayFn = (value: any) => {
-        return Boolean(value) && typeof value == "object" ? value.name : value;
-    };
+    withIndex(index): any {
+        return map((val) => [val, index]);
+    }
 
-    onFilter(event) {
-        console.log(event);
-        this.optionsObservable = of(
-            this.simpleSelect.filter((item) => item.indexOf(event) == 0)
+    @Autobind
+    filterWith2(val: KeyValue): Observable<any[]> {
+        return this._as.getObjList().pipe(
+            this.log.Tap(`filter value ${val}`),
+            map((list: any[]) =>
+                !val ? list : list.filter((item) => item.key.includes(val))
+            )
         );
     }
 
-    onSelect(event) {
-        console.log(event);
+    valueWith2(o: KeyValue): string {
+        return o ? o.value : null;
+    }
+    displayWith2(o: KeyValue): string {
+        return o ? o.key : "";
     }
 }
 ```
@@ -86,21 +136,31 @@ app.module.ts
 ```ts
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { AppRoutingModule } from "./app-routing.module";
+
 import { AppComponent } from "./app.component";
-import { SimpleSearchSelectModule } from "simple-search-select";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatOptionModule } from "@angular/material/core";
+import { MatInputModule } from "@angular/material/input";
+import { PglSearchSelectModule } from "projects/pgl-search-select/src/public-api";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { ReactiveFormsModule } from "@angular/forms";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
     declarations: [AppComponent],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
-        FormsModule,
         ReactiveFormsModule,
-        AppRoutingModule,
-        SimpleSearchSelectModule,
+        MatAutocompleteModule,
+        MatFormFieldModule,
+        MatOptionModule,
+        MatInputModule,
+        MatIconModule,
+        MatButtonModule,
+        PglSearchSelectModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
@@ -114,15 +174,12 @@ export class AppModule {}
 @Input() placeholder: string
 @Input() required: boolean
 @Input() disabled: boolean
-@Input() value: T | T[K]
+@Input() value: T
 @Input() displayFn: (_: string | T)=> string;
 @Input() valueFn: (item: T) => T | T[K];
 @Input() filterWith: (val: string)=> T[]
-// @Input() classes: string | string[]
-@Input() emptyValue: string
-@Input() options: T[]
-// @Input() startFilter: string
-// @Input() useStartWith: boolean
+@Input() options: T[];
+@Input() startWith: string; // defautl ''. If null or undefined will bypass the initial filtering.
 @Input() searchWait: number;
 @Output() onSelect: any;
 @Output() onFilter: string

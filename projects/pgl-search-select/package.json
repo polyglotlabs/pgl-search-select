@@ -1,6 +1,6 @@
 {
-  "name": "pgl-search-select",
-  "version": "9.0.1",
+  "name": "@pgl-cortex/pgl-search-select",
+  "version": "9.0.0-alpha",
   "peerDependencies": {
     "@angular/common": "^9.1.0",
     "@angular/core": "^9.1.0",
