@@ -1,5 +1,5 @@
 <mat-form-field>
-    <mat-label></mat-label>
+    <mat-label>String Search 1</mat-label>
     <pgl-search-select placeholder="search" [formControl]="searchSelect1" [options]="optionList1$ | async">
     </pgl-search-select>
     <mat-error>Error</mat-error>
@@ -31,7 +31,7 @@
     </pgl-search-select>
 </mat-form-field>
 
-<div matAutocompleteOrigin #origin='matAutocompleteOrigin'>
+<!-- <div matAutocompleteOrigin #origin='matAutocompleteOrigin'>
     <mat-form-field>
         <mat-label>Native Autocomplete</mat-label>
         <input matInput placeholder="search" [formControl]="testInput" [matAutocomplete]="auto"
@@ -45,4 +45,4 @@
         <mat-option value="two">Two</mat-option>
     </mat-autocomplete>
 
-</div>
+</div> -->
