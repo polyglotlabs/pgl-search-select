@@ -25,8 +25,9 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
+            "eslintConfig": "apps/<>/.eslintrc.js",
             "tsConfig": [
               "projects/pgl-search-select/tsconfig.lib.json",
               "projects/pgl-search-select/tsconfig.spec.json"
@@ -133,8 +134,9 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
+            "eslintConfig": "apps/<>/.eslintrc.js",
             "tsConfig": [
               "projects/pgl-search-select-tester/tsconfig.app.json",
               "projects/pgl-search-select-tester/tsconfig.spec.json",

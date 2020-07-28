@@ -18,23 +18,23 @@ import {
     Inject,
     Host,
     HostListener,
-} from "@angular/core";
-import { FormControl, ControlValueAccessor, NgControl } from "@angular/forms";
+} from '@angular/core';
+import { FormControl, ControlValueAccessor, NgControl } from '@angular/forms';
 import {
     MatFormFieldControl,
     MAT_FORM_FIELD,
     MatFormField,
-} from "@angular/material/form-field";
+} from '@angular/material/form-field';
 import {
     MatAutocompleteOrigin,
     MatAutocompleteTrigger,
     MatAutocompleteSelectedEvent,
-} from "@angular/material/autocomplete";
-import { FocusMonitor } from "@angular/cdk/a11y";
+} from '@angular/material/autocomplete';
+import { FocusMonitor } from '@angular/cdk/a11y';
 import {
     coerceBooleanProperty,
     coerceNumberProperty,
-} from "@angular/cdk/coercion";
+} from '@angular/cdk/coercion';
 import {
     Subject,
     Observable,
@@ -46,7 +46,7 @@ import {
     empty,
     combineLatest,
     zip,
-} from "rxjs";
+} from 'rxjs';
 import {
     filter,
     takeUntil,
@@ -60,23 +60,23 @@ import {
     startWith,
     tap,
     map,
-} from "rxjs/operators";
+} from 'rxjs/operators';
 
 type Emptyable<T> = T | null | undefined;
 type AnyFunction = (...args: any[]) => any;
 
 @Directive({
-    selector: "[pglOptionDef]",
+    selector: '[pglOptionDef]',
 })
 export class PGLOptionDef {}
 
 @Directive({
-    selector: "[pglEmptyOptionDef]",
+    selector: '[pglEmptyOptionDef]',
 })
 export class PGLEmptyOptionDef {}
 
 @Directive({
-    selector: "[pglLoadingOptionDef]",
+    selector: '[pglLoadingOptionDef]',
 })
 export class PGLLoadingOptionDef {}
 
@@ -86,7 +86,7 @@ export function optionalStartWith<T, D>(str: D): OperatorFunction<T, T | D> {
 }
 
 @Component({
-    selector: "pgl-search-select",
+    selector: 'pgl-search-select',
     template: `
         <input
             [placeholder]="!hidePlaceholder ? placeholder : ''"
@@ -235,6 +235,15 @@ export class PGLSearchSelectComponent<T>
     // STATIC
     static nextID = 0;
 
+     // PUBLIC
+     public searchField = new FormControl('');
+     public stateChanges = new Subject<void>();
+     public controlType = 'pgl-search-select';
+     public focused = false;
+     public isLoading$!: Observable<boolean>;
+     public options$!: Observable<Emptyable<T[]>>;
+     public autofilled?: boolean;
+
     // PRIVATE
     private _options?: Emptyable<T[]>;
     private _value?: Emptyable<T>;
@@ -247,8 +256,15 @@ export class PGLSearchSelectComponent<T>
     private _isEmptyOptionFirst = false;
     private _destroyed$ = new Subject<void>();
     private _searchTrigger$!: Observable<string>;
-    private _startWith = "";
-    private _isStatic = false;
+    private _startWith = '';
+    // private _isStatic = false;
+    private _buttons: {
+        close: string;
+        open: string;
+    } = {
+            close: 'arrow_drop_up',
+            open: 'arrow_drop_down',
+    };
 
     private _onChange: AnyFunction = (..._: any[]) => {
         // console.error("onChange is not set");
@@ -256,15 +272,6 @@ export class PGLSearchSelectComponent<T>
     private _onTouched: AnyFunction = (..._: any[]) => {
         // console.error("onTouch is not set");
     };
-
-    // PUBLIC
-    public searchField = new FormControl("");
-    public stateChanges = new Subject<void>();
-    public controlType = "pgl-search-select";
-    public focused = false;
-    public isLoading$!: Observable<boolean>;
-    public options$!: Observable<Emptyable<T[]>>;
-    public autofilled?: boolean;
 
     // GETTER AND SETTERS
     get empty(): boolean {
@@ -274,9 +281,9 @@ export class PGLSearchSelectComponent<T>
     get errorState(): boolean {
         return coerceBooleanProperty(
             !!this.ngControl &&
-            this.ngControl.errors !== null &&
-            this.ngControl.touched &&
-            this.searchField.dirty
+                this.ngControl.errors !== null &&
+                this.ngControl.touched &&
+                this.searchField.dirty
         );
     }
 
@@ -291,9 +298,7 @@ export class PGLSearchSelectComponent<T>
     }
 
     get hasControl(): boolean {
-        return (
-            !!this.ngControl && !!this.ngControl.control
-        )
+        return !!this.ngControl && !!this.ngControl.control;
     }
 
     @Input()
@@ -307,7 +312,7 @@ export class PGLSearchSelectComponent<T>
 
     // OPTIONS
     @Input()
-    get options(): Emptyable<T[]>{
+    get options(): Emptyable<T[]> {
         return this._options;
     }
     set options(op: Emptyable<T[]>) {
@@ -340,7 +345,7 @@ export class PGLSearchSelectComponent<T>
 
     // PLACEHOLDER
     @Input()
-    get placeholder(): string{
+    get placeholder(): string {
         return this._placeholder || '';
     }
     set placeholder(plh: string) {
@@ -350,11 +355,11 @@ export class PGLSearchSelectComponent<T>
 
     // VALUE
     @Input()
-    get value(): Emptyable<T>{
+    get value(): Emptyable<T> {
         return this._value;
     }
 
-    set value(val:  Emptyable<T>) {
+    set value(val: Emptyable<T>) {
         this._value = val;
         this.searchField.setValue(this._value);
         this._stateChanged();
@@ -362,14 +367,21 @@ export class PGLSearchSelectComponent<T>
     }
 
     // Buttons
-    @Input() buttons: {
+    @Input()
+    get buttons(): {
         close: string;
         open: string;
-    } = {
-        close: "arrow_drop_up",
-        open: "arrow_drop_down",
-    };
-    @Input("pglEmptyOptionFirst")
+    } {
+        return this._buttons;
+    }
+    set buttons(value: {
+        close: string;
+        open: string;
+    }) {
+        this._buttons = value;
+    }
+
+    @Input('pglEmptyOptionFirst')
     get isEmptyOptionFirst(): boolean {
         return this._isEmptyOptionFirst;
     }
@@ -396,12 +408,12 @@ export class PGLSearchSelectComponent<T>
     // }
 
     // DISPLAY FN
-    @Input() displayWith = (item: string | T) => `${item || ""}`;
+    @Input() displayWith = (item: string | T) => `${item || ''}`;
     // VALUE FN
     @Input() valueWith: (item: T) => T = (item: T) => item;
     // FILTER WITH FN
     @Input() filterWith = (val: any) =>
-        !val || typeof val != "string"
+        !val || typeof val != 'string'
             ? of(this.options)
             : from(this.options || []).pipe(
                   filter((o) => this.displayWith(o).startsWith(val)),
@@ -414,23 +426,23 @@ export class PGLSearchSelectComponent<T>
     @Output() onFilter = new EventEmitter<string>();
 
     // HOSTBINDING
-    @HostBinding("class.floating")
-    get shouldLabelFloat() {
+    @HostBinding('class.floating')
+    get shouldLabelFloat(): boolean {
         return this.focused || !this.empty || !!this.searchField.value;
     }
     @HostBinding() id = `${
         this.controlType
     }-${PGLSearchSelectComponent.nextID++}`;
-    @HostBinding("attr.aria-describedby") describedBy = "";
+    @HostBinding('attr.aria-describedby') describedBy = '';
 
-    @HostListener("click")
-    onClick() {
+    @HostListener('click')
+    onClick(): void {
         if (this.autoComplete && !this.autoComplete.autocomplete.isOpen) {
             this.autoComplete.openPanel();
         }
     }
     // VIEW CHILD
-    @ViewChild("autoCompleteInput", { read: MatAutocompleteTrigger })
+    @ViewChild('autoCompleteInput', { read: MatAutocompleteTrigger })
     autoComplete!: MatAutocompleteTrigger;
 
     // CONTENT CHILD
@@ -455,9 +467,9 @@ export class PGLSearchSelectComponent<T>
             .subscribe((origin) => {
                 this.focused = !!origin;
                 if (this.hasControl && !this.ngControl.touched) {
-                    this.ngControl.control!.markAsTouched();
+                    this.ngControl.control.markAsTouched();
                 }
-                if (!this.focused && this.searchField.value != this._value) {
+                if (!this.focused && this.searchField.value !== this._value) {
                     this.searchField.patchValue(this.value, {
                         emitEvent: false,
                     });
@@ -469,16 +481,16 @@ export class PGLSearchSelectComponent<T>
     }
 
     setDescribedByIds(ids: string[]): void {
-        this.describedBy = ids.join(" ");
+        this.describedBy = ids.join(' ');
     }
 
     ngAfterViewInit(): void {
         this._searchTrigger$ = this.searchField.valueChanges.pipe(
-            filter((val) => typeof val == "string"),
+            filter((val) => typeof val == 'string'),
             optionalStartWith(this.startWith),
             distinctUntilChanged(),
             debounceTime(this.searchWait),
-            tap((val) => this.onFilter.next(val)),
+            tap((val: string) => this.onFilter.next(val)),
             shareReplay(1)
         );
         this.options$ = merge(
@@ -502,34 +514,36 @@ export class PGLSearchSelectComponent<T>
         this._destroyed$.complete();
     }
 
-    // PRIVATE METHODS
-    private _stateChanged(): void {
+     // PRIVATE METHODS
+     private _stateChanged(): void {
         this.stateChanges.next();
     }
 
     // PUBLIC METHODS
 
-    toggle(e: MouseEvent) {
+    toggle(e: MouseEvent): void {
         e.preventDefault();
         e.stopPropagation();
-        this.autoComplete.autocomplete.isOpen
-            ? this.autoComplete.closePanel()
-            : this.autoComplete.openPanel();
+        if(this.autoComplete.autocomplete.isOpen) {
+            this.autoComplete.closePanel()
+            return;
+        }
+        this.autoComplete.openPanel();
     }
-    select(e: MatAutocompleteSelectedEvent) {
-        if (e.option.value == undefined) {
+    select(e: MatAutocompleteSelectedEvent): void {
+        if (e.option.value === undefined) {
             e.option.value = null;
             this.searchField.patchValue(null);
             this.options$ = this.filterWith(this.startWith);
         }
-        this._value = e.option.value;
+        this._value = e.option.value as T;
         this._onChange(this._value);
         this.onSelect.emit(this._value);
     }
 
-    onContainerClick(event: MouseEvent) {
-        if ((event.target as Element).tagName.toLowerCase() !== "input") {
-            const input = this.elementRef.nativeElement.querySelector("input");
+    onContainerClick(event: MouseEvent): void {
+        if ((event.target as Element).tagName.toLowerCase() !== 'input') {
+            const input = this.elementRef.nativeElement.querySelector('input');
             if (input) {
                 input.focus();
             }
@@ -546,7 +560,7 @@ export class PGLSearchSelectComponent<T>
         }
         this.value = v;
     }
-    registerOnChange(fn: (...any: any[]) => any): void {
+    registerOnChange(fn: (...args: any[]) => any): void {
         this._onChange = fn;
     }
     registerOnTouched(fn: (...args: any[]) => any): void {

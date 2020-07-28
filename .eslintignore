@@ -1,0 +1,6 @@
+**/*.spec.ts
+node_modules
+e2e/
+.eslintrc
+dist/
+**/test.ts
