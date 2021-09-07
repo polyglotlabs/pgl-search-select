@@ -13,7 +13,7 @@
     "test:coverage": "ng test --project=pgl-search-select --watch=false --code-coverage",
     "lint": "eslint . --ext .ts",
     "e2e": "ng e2e",
-    "build:lib": "ng build pgl-search-select",
+    "build:lib": "ng build pgl-search-select --configuration production",
     "build:lib:watch": "ng build pgl-search-select --watch",
     "start:all": "npm run build:lib && npm run docker:start",
     "cypress:open": "cypress open",
