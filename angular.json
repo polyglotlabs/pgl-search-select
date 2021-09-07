@@ -10,11 +10,20 @@
       "prefix": "pgl",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/pgl-search-select/tsconfig.lib.json",
             "project": "projects/pgl-search-select/ng-package.json"
-          }
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/pgl-search-select/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/pgl-search-select/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
@@ -58,7 +67,6 @@
             "main": "projects/pgl-search-select-tester/src/main.ts",
             "polyfills": "projects/pgl-search-select-tester/src/polyfills.ts",
             "tsConfig": "projects/pgl-search-select-tester/tsconfig.app.json",
-            "aot": true,
             "assets": [
               "projects/pgl-search-select-tester/src/favicon.ico",
               "projects/pgl-search-select-tester/src/assets"
@@ -66,7 +74,13 @@
             "styles": [
               "projects/pgl-search-select-tester/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -97,7 +111,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
