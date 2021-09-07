@@ -467,7 +467,7 @@ export class PGLSearchSelectComponent<T>
             .subscribe((origin) => {
                 this.focused = !!origin;
                 if (this.hasControl && !this.ngControl.touched) {
-                    this.ngControl.control.markAsTouched();
+                    this.ngControl.control?.markAsTouched();
                 }
                 if (!this.focused && this.searchField.value !== this._value) {
                     this.searchField.patchValue(this.value, {
