@@ -1,14 +1,20 @@
 {
   "name": "@pgl-cortex/pgl-search-select",
-  "version": "10.0.0",
+  "version": "11.0.0",
   "peerDependencies": {
-    "@angular/animations": "^10.0.5",
-    "@angular/cdk": "^10.1.1",
-    "@angular/common": "^10.0.5",
-    "@angular/compiler": "^10.0.5",
-    "@angular/core": "^10.0.5",
-    "@angular/forms": "^10.0.5",
-    "@angular/material": "^10.1.1"
+    "@angular/animations": "^11.2.14",
+    "@angular/cdk": "^11.2.13",
+    "@angular/common": "^11.2.14",
+    "@angular/compiler": "^11.2.14",
+    "@angular/core": "^11.2.14",
+    "@angular/forms": "^11.2.14",
+    "@angular/material": "^11.2.13",
+    "@angular/platform-browser": "^11.2.14",
+    "@angular/platform-browser-dynamic": "^11.2.14",
+    "@angular/router": "^11.2.14",
+    "rxjs": "^6.6.0",
+    "tslib": "^2.0.0",
+    "zone.js": "^0.10.3"
   },
   "dependencies": {
     "tslib": "^2.0.0"
