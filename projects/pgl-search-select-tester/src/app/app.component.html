@@ -1,15 +1,19 @@
-<mat-form-field>
-    <mat-label>String Search 1</mat-label>
-    <pgl-search-select placeholder="search" [formControl]="searchSelect1" [options]="optionList1$ | async">
-    </pgl-search-select>
-    <mat-error>Error</mat-error>
-    <mat-hint>Hint</mat-hint>
-</mat-form-field>
-<div>
-    <pre>
-        {{ log.jsonSafeObj(searchSelect1, 1) | json}}
-    </pre>
-</div>
+<form (ngSubmit)="submit()" [formGroup]="form">
+    <mat-form-field>
+        <mat-label>String Search 1</mat-label>
+        <pgl-search-select placeholder="search" formControlName="example1" [options]="optionList1$ | async">
+        </pgl-search-select>
+        <mat-error>Error</mat-error>
+        <mat-hint>Hint</mat-hint>
+    </mat-form-field>
+    <div>
+        <pre>
+            {{ log.jsonSafeObj(searchSelect1, 1) | json}}
+        </pre>
+    </div>
+    <button mat-button >Submit</button>
+</form>
+
 <br>
 <mat-form-field>
     <mat-label>String List 2</mat-label>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormControl, Validators } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { AppService, KeyValue } from "./app.service";
 import { Observable, Observer } from "rxjs";
 import { map, shareReplay, tap } from "rxjs/operators";
@@ -20,6 +20,7 @@ export class AppComponent implements OnInit, Observer<any> {
     log = Logger;
     testInput = new FormControl();
     searchSelect1 = new FormControl(null, Validators.required);
+    form: FormGroup
     optionList1$: Observable<string[]>;
     optionList3$: Observable<GenericObj[]>;
     searchSelect2 = new FormControl({
@@ -33,6 +34,9 @@ export class AppComponent implements OnInit, Observer<any> {
         this.searchSelect1.valueChanges.pipe(this.withIndex(1)).subscribe(this);
         this.searchSelect2.valueChanges.pipe(this.withIndex(2)).subscribe(this);
         this.searchSelect3.valueChanges.pipe(this.withIndex(3)).subscribe(this);
+        this.form = new FormGroup({
+            example1: this.searchSelect1
+        })
         this.optionList1$ = this._as.getList().pipe(shareReplay(1));
         this.optionList3$ = this._as.getObjList().pipe(shareReplay(1));
     }
@@ -74,5 +78,11 @@ export class AppComponent implements OnInit, Observer<any> {
     }
     displayWith2(o: KeyValue): string {
         return o ? o.key : "";
+    }
+
+    submit(){
+        this.form.markAllAsTouched();
+        this.searchSelect1.markAsTouched();
+        console.log("submitted")
     }
 }
