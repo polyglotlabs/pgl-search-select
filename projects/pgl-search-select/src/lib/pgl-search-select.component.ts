@@ -481,7 +481,7 @@ export class PGLSearchSelectComponent<T>
         }
     }
     onFocusIn(event: FocusEvent): void {
-        console.log(event);
+        // console.log(event);
         if (!this.focused) {
             this.focused = true;
             if(this.searchField.value !== this._value){
@@ -493,7 +493,7 @@ export class PGLSearchSelectComponent<T>
           }
     }
     onFocusOut(event: FocusEvent): void {
-        console.log(event);
+        // console.log(event);
         if (!this.elementRef.nativeElement.contains(event.relatedTarget as Element)) {
             this.touched = true;
             this.focused = false;
@@ -534,7 +534,7 @@ export class PGLSearchSelectComponent<T>
         if(this.ngControl && this.ngControl.touched != this.touched){
             this.touched = this.ngControl.touched ?? false;
             this._stateChanged();
-            console.log("ng do check", this.ngControl.touched)
+            // console.log("ng do check", this.ngControl.touched)
         }
     }
 
@@ -591,16 +591,10 @@ export class PGLSearchSelectComponent<T>
         this.value = v;
     }
     registerOnChange(fn: (...args: any[]) => any): void {
-        this._onChange = (...args: any)=> {
-            console.log("onchange", args);
-            fn(...args);
-        };
+        this._onChange = fn
     }
     registerOnTouched(fn: (...args: any[]) => any): void {
-        this._onTouched = (...args: any[])=> {
-            console.log("ontouch",args);
-            fn(...args)
-        };
+        this._onTouched = fn
     }
     setDisabledState?(_: boolean): void {}
 }
