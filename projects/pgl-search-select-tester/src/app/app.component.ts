@@ -82,7 +82,6 @@ export class AppComponent implements OnInit, Observer<any> {
 
     submit(){
         this.form.markAllAsTouched();
-        this.searchSelect1.markAsTouched();
-        console.log("submitted")
+        // console.log("submitted")
     }
 }
