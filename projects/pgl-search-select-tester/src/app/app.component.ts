@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import { AppService, KeyValue } from "./app.service";
 import { Observable, Observer } from "rxjs";
 import { map, shareReplay, tap } from "rxjs/operators";
@@ -18,23 +18,23 @@ interface GenericObj<T = any> {
 export class AppComponent implements OnInit, Observer<any> {
     title = "pgl-search-select-tester";
     log = Logger;
-    testInput = new FormControl();
-    searchSelect1 = new FormControl(null, Validators.required);
-    form: FormGroup
+    testInput = new UntypedFormControl();
+    searchSelect1 = new UntypedFormControl(null, Validators.required);
+    form: UntypedFormGroup
     optionList1$: Observable<string[]>;
     optionList3$: Observable<GenericObj[]>;
-    searchSelect2 = new FormControl({
+    searchSelect2 = new UntypedFormControl({
         key: "family",
         value: "indeed",
     }, Validators.required);
-    searchSelect3 = new FormControl();
+    searchSelect3 = new UntypedFormControl();
     constructor(private _as: AppService) {}
 
     ngOnInit(): void {
         this.searchSelect1.valueChanges.pipe(this.withIndex(1)).subscribe(this);
         this.searchSelect2.valueChanges.pipe(this.withIndex(2)).subscribe(this);
         this.searchSelect3.valueChanges.pipe(this.withIndex(3)).subscribe(this);
-        this.form = new FormGroup({
+        this.form = new UntypedFormGroup({
             example1: this.searchSelect1
         })
         this.optionList1$ = this._as.getList().pipe(shareReplay(1));

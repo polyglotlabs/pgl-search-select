@@ -19,7 +19,7 @@ import {
     Host,
     HostListener,
 } from "@angular/core";
-import { FormControl, ControlValueAccessor, NgControl } from "@angular/forms";
+import { UntypedFormControl, ControlValueAccessor, NgControl } from "@angular/forms";
 import {
     MatFormFieldControl,
     MAT_FORM_FIELD,
@@ -241,7 +241,7 @@ export class PGLSearchSelectComponent<T>
     static nextID = 0;
 
     // PUBLIC
-    public searchField = new FormControl("");
+    public searchField = new UntypedFormControl("");
     public stateChanges = new Subject<void>();
     public controlType = "pgl-search-select";
     public touched = false;
