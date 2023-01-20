@@ -4,3 +4,4 @@ e2e/
 .eslintrc
 dist/
 **/test.ts
+.angular
