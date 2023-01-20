@@ -412,7 +412,7 @@ export class PGLSearchSelectComponent<T>
     // VALUE FN
     @Input() valueWith: (item: T) => T = (item: T) => item;
     // FILTER WITH FN
-    @Input() filterWith = (val: any) =>
+    @Input() filterWith = (val: string) =>
         !val || typeof val != "string"
             ? of(this.options)
             : from(this.options || []).pipe(
@@ -525,8 +525,8 @@ export class PGLSearchSelectComponent<T>
             shareReplay()
         );
         this.isLoading$ = merge(
-            this._searchTrigger$.pipe(mapTo(this.displayLoading)),
-            this.options$.pipe(mapTo(false))
+            this._searchTrigger$.pipe(mapTo(this.displayLoading)) as Observable<boolean>,
+            this.options$.pipe(mapTo(false)) as Observable<boolean>
         );
     }
 
