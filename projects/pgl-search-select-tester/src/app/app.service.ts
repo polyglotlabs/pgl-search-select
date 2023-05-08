@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { delay } from "rxjs/operators";
+import { delay, tap } from "rxjs/operators";
 
 export interface KeyValue {
     key: string;
@@ -31,7 +31,7 @@ export class AppService {
                 key: "valve",
                 value: "elbow",
             },
-        ]).pipe(this.randomDelay(3000)) as Observable<KeyValue[]>;
+        ]).pipe(tap(_ => console.log("getObjectList")), this.randomDelay(3000)) as Observable<KeyValue[]>;
     }
 
     randomDelay(c: number) {

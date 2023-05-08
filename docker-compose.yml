@@ -2,7 +2,7 @@ version: '3'
 
 services:
   tester-app:
-    image: node:16-alpine
+    image: node:16.10-alpine
     volumes:
       - ./:/src/app
     user: "${UID:?User ID is not set}:${GID:?Group ID is not set}"
@@ -11,23 +11,23 @@ services:
     command: -c "npm run docker:start"
     depends_on:
       - dl
-    ports: 
+    ports:
     - 4200:4200
     logging:
       options:
         max-size: "5k"
 
- 
+
 
   dl:
-    image: node:16-alpine
+    image: node:16.10-alpine
     volumes:
       - ./:/src/app
     working_dir: /src/app
     entrypoint:
       - sh
       - -c
-      - npm run build:lib:watch 
+      - npm run build:lib:watch
     logging:
       options:
         max-size: "5k"

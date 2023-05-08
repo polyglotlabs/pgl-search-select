@@ -46,6 +46,7 @@ import {
     empty,
     combineLatest,
     zip,
+    race,
 } from "rxjs";
 import {
     filter,
@@ -89,7 +90,7 @@ export function optionalStartWith<T, D>(str: D): OperatorFunction<T, T | D> {
     selector: "pgl-search-select",
     template: `
         <input
-            [placeholder]="!hidePlaceholder ? placeholder : ''"
+            [placeholder]="hidePlaceholder ? this.placeholder : ''"
             #autoCompleteInput
             [matAutocomplete]="listOptions"
             [formControl]="searchField"
@@ -246,7 +247,7 @@ export class PGLSearchSelectComponent<T>
     public controlType = "pgl-search-select";
     public touched = false;
     public focused = false;
-    public isLoading$!: Observable<boolean>;
+    public isLoading$: Observable<boolean> = of(true);
     public options$!: Observable<Emptyable<T[]>>;
     public autofilled?: boolean;
 
@@ -295,9 +296,7 @@ export class PGLSearchSelectComponent<T>
     }
 
     get hidePlaceholder(): boolean {
-        return this._formField
-            ? this._formField._hideControlPlaceholder()
-            : false;
+        return !!this.placeholder && this.focused
     }
 
     get hasControl(): boolean {
@@ -463,19 +462,6 @@ export class PGLSearchSelectComponent<T>
         @Optional() public parentFormField: MatFormField,
         @Optional() @Self() public ngControl: NgControl
     ) {
-        // this._fm
-        //     .monitor(this.elementRef.nativeElement, true)
-        //     .subscribe((origin) => {
-        //         this.focused = !!origin;
-        //         if (this.hasControl && !this.ngControl.touched) {
-        //             this.ngControl.control?.markAsTouched();
-        //         }
-        //         if (!this.focused && this.searchField.value !== this._value) {
-        //             this.searchField.patchValue(this.value, {
-        //                 emitEvent: false,
-        //             });
-        //         }
-        //     });
         if (this.ngControl != null) {
             this.ngControl.valueAccessor = this;
         }
@@ -489,7 +475,7 @@ export class PGLSearchSelectComponent<T>
                     emitEvent: false,
                 });
             }
-            this.stateChanges.next();
+            this._stateChanged();
           }
     }
     onFocusOut(event: FocusEvent): void {
@@ -498,7 +484,7 @@ export class PGLSearchSelectComponent<T>
             this.touched = true;
             this.focused = false;
             this._onTouched();
-            this.stateChanges.next();
+            this._stateChanged();
           }
     }
 
@@ -508,26 +494,28 @@ export class PGLSearchSelectComponent<T>
 
     ngAfterViewInit(): void {
         this._searchTrigger$ = this.searchField.valueChanges.pipe(
+            tap(value => console.log(value)),
             filter((val) => typeof val == "string"),
             optionalStartWith(this.startWith),
-            distinctUntilChanged(),
-            debounceTime(this.searchWait),
-            tap((val: string) => this.onFilter.next(val)),
             shareReplay(1)
         );
         this.options$ = merge(
-            this.stateChanges.pipe(switchMap((_) => this._searchTrigger$)),
-            this._searchTrigger$
+            this.stateChanges.pipe(tap(_ => console.log("state changed fired")), switchMap((_) => this._searchTrigger$)),
+            this._searchTrigger$.pipe(tap(_ => console.log("search triggered")))
         ).pipe(
+            distinctUntilChanged(),
+            debounceTime(this.searchWait),
+            tap((val: string) => this.onFilter.next(val)),
             switchMap(this.filterWith),
+            tap(value => console.log("last value: ", value)),
             takeUntil(this._destroyed$),
             filter((val) => !!val),
-            shareReplay()
+            shareReplay(1)
         );
         this.isLoading$ = merge(
-            this._searchTrigger$.pipe(mapTo(this.displayLoading)) as Observable<boolean>,
-            this.options$.pipe(mapTo(false)) as Observable<boolean>
-        );
+            this._searchTrigger$.pipe(map(() => this.displayLoading)) as Observable<boolean>,
+            this.options$.pipe(map(() => false)) as Observable<boolean>
+        ).pipe(startWith(true));
     }
 
     ngDoCheck(){
@@ -564,7 +552,8 @@ export class PGLSearchSelectComponent<T>
         if (e.option.value === undefined) {
             e.option.value = null;
             this.searchField.patchValue(null);
-            this.options$ = this.filterWith(this.startWith);
+            // this.options$ = this.filterWith(this.startWith);
+            this._stateChanged()
         }
         this._value = e.option.value as T;
         this._onChange(this._value);
